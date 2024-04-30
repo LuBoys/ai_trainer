@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'navigation_bar_with_controller.dart'; // Assurez-vous que le chemin d'importation est correct
 
 class FormulairePage extends StatefulWidget {
@@ -47,7 +49,7 @@ class _FormulairePageState extends State<FormulairePage> {
     super.dispose();
   }
 
-  void submitFormData() {
+  void submitFormData() async {
     Map<String, dynamic> formData = {
       'sexe': sexe,
       'poids': poids,
@@ -66,8 +68,9 @@ class _FormulairePageState extends State<FormulairePage> {
       'detailsRestrictions': _detailsRestrictionsController.text
     };
 
-    FirebaseFirestore.instance.collection('formResponses').add(formData).then((documentReference) {
+      FirebaseFirestore.instance.collection('formResponses').add(formData).then((documentReference) async {
       print("Document ajouté avec l'ID: ${documentReference.id}");
+      await sendFormDataToAPI(formData);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Données du formulaire soumises avec succès!'))
       );
@@ -77,6 +80,24 @@ class _FormulairePageState extends State<FormulairePage> {
         SnackBar(content: Text('Erreur lors de la soumission des données.'))
       );
     });
+  }
+
+  Future<void> sendFormDataToAPI(Map<String, dynamic> formData) async {
+    final response = await http.post(
+      Uri.parse('http://votre_serveur/generate-program'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({'data': formData}),
+    );
+
+    if (response.statusCode == 200) {
+      final programme = jsonDecode(response.body);
+      print('Programme reçu: $programme');
+      // Affichez ici ou gérez le programme comme vous le souhaitez
+    } else {
+      throw Exception('Échec de la génération du programme: ${response.body}');
+    }
   }
 
   @override
@@ -228,17 +249,17 @@ class _FormulairePageState extends State<FormulairePage> {
                 ),
               ),
               SizedBox(height: 20),
-             Center(
-  child: ElevatedButton(
-    onPressed: submitFormData, // Ici, vous appelez la fonction de soumission lorsque le bouton est pressé.
-    child: Text('Soumettre'),
-  ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: submitFormData,
+                  child: Text('Soumettre'),
+                ),
               ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: NavigationBarWithController(selectedIndex: 1),  // Index pour cette page
+      bottomNavigationBar: NavigationBarWithController(selectedIndex: 1),
     );
   }
 }

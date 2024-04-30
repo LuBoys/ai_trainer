@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => AuthWrapper(auth: auth),
         '/login': (context) => LoginPage(),
         '/home': (context) => HomePage(),
-        '/mesProgrammes': (context) => MesProgrammesPage(),  // Assurez-vous que cette page est définie
+        '/mesProgrammes': (context) => MesProgrammesPage(programmeText: '',),  // Assurez-vous que cette page est définie
         '/profil': (context) => ProfilePage(),  // Assurez-vous que cette page est définie
       },
     );
