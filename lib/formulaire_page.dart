@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'navigation_bar_with_controller.dart'; // Assurez-vous que le chemin d'importation est correct
 
 class FormulairePage extends StatefulWidget {
@@ -15,7 +16,7 @@ class _FormulairePageState extends State<FormulairePage> {
   String? intensite;
   String? typeSeance;
   String? formatEntrainement;
-  double? tempsEntrainement;
+  double? tempsEntrainementHeure;
   bool inclureCardio = false;
   String? niveauExperience;
   bool aAccesEquipement = false;
@@ -44,6 +45,38 @@ class _FormulairePageState extends State<FormulairePage> {
     _detailsEquipementController.dispose();
     _detailsRestrictionsController.dispose();
     super.dispose();
+  }
+
+  void submitFormData() {
+    Map<String, dynamic> formData = {
+      'sexe': sexe,
+      'poids': poids,
+      'objectif': objectif,
+      'partiesMusculaires': partiesMusculaires.toList(),
+      'nombreJours': nombreJours,
+      'intensite': intensite,
+      'typeSeance': typeSeance,
+      'formatEntrainement': formatEntrainement,
+      'tempsEntrainement': tempsEntrainementHeure,
+      'inclureCardio': inclureCardio,
+      'niveauExperience': niveauExperience,
+      'aAccesEquipement': aAccesEquipement,
+      'aRestrictions': aRestrictions,
+      'detailsEquipement': _detailsEquipementController.text,
+      'detailsRestrictions': _detailsRestrictionsController.text
+    };
+
+    FirebaseFirestore.instance.collection('formResponses').add(formData).then((documentReference) {
+      print("Document ajouté avec l'ID: ${documentReference.id}");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Données du formulaire soumises avec succès!'))
+      );
+    }).catchError((e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de la soumission des données.'))
+      );
+    });
   }
 
   @override
@@ -149,8 +182,8 @@ class _FormulairePageState extends State<FormulairePage> {
                 hint: Text('Format d\'entraînement'),
               ),
               DropdownButton<double>(
-                value: tempsEntrainement,
-                onChanged: (newValue) => setState(() => tempsEntrainement = newValue),
+                value: tempsEntrainementHeure,
+                onChanged: (newValue) => setState(() => tempsEntrainementHeure = newValue),
                 items: <double>[0.5, 1.0, 1.5, 2.0, 2.5, 3.0].map<DropdownMenuItem<double>>((value) {
                   return DropdownMenuItem<double>(
                     value: value,
@@ -195,19 +228,17 @@ class _FormulairePageState extends State<FormulairePage> {
                 ),
               ),
               SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Logique pour soumettre les informations
-                  },
-                  child: Text('Soumettre'),
-                ),
+             Center(
+  child: ElevatedButton(
+    onPressed: submitFormData, // Ici, vous appelez la fonction de soumission lorsque le bouton est pressé.
+    child: Text('Soumettre'),
+  ),
               ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: NavigationBarWithController(selectedIndex: 1),  
+      bottomNavigationBar: NavigationBarWithController(selectedIndex: 1),  // Index pour cette page
     );
   }
 }

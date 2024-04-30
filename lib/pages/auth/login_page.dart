@@ -8,7 +8,7 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State{
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final _formKey = GlobalKey<FormState>();
@@ -32,6 +32,22 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       print('Erreur lors de la connexion : $e');
       // Vous pouvez afficher une alerte ou un Snackbar ici pour informer l'utilisateur
+    }
+  }
+
+  void _sendPasswordResetEmail() {
+    var email = _emailController.text.trim();
+    if (email.isNotEmpty) {
+      _auth.sendPasswordResetEmail(email: email).then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Lien de réinitialisation envoyé à $email"))
+        );
+      }).catchError((error) {
+        print('Erreur d’envoi de l’email de réinitialisation : $error');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Erreur lors de l'envoi de l'email"))
+        );
+      });
     }
   }
 
@@ -80,6 +96,10 @@ class _LoginPageState extends State<LoginPage> {
                 );
               },
               child: Text("S'inscrire"),
+            ),
+            TextButton(
+              onPressed: _sendPasswordResetEmail,
+              child: Text("Mot de passe oublié ?"),
             ),
           ],
         ),
