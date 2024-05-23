@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:test/firebase_options.dart';  // Assurez-vous que ce chemin est correct
-import 'package:test/pages/auth/login_page.dart'; // Vérifiez ce chemin également
+import 'package:test/firebase_options.dart';
+import 'package:test/pages/auth/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:test/pages/home_page.dart'; // Assurez-vous d'ajouter ce chemin
-import 'package:test/pages/auth/profile_page.dart';  // Assurez-vous d'avoir cette page
-import 'package:test/mes_programmes.dart'; // Assurez-vous d'avoir cette page
+import 'package:test/pages/home_page.dart';
+import 'package:test/pages/auth/profile_page.dart';
+import 'package:test/mes_programmes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,8 +33,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => AuthWrapper(auth: auth),
         '/login': (context) => LoginPage(),
         '/home': (context) => HomePage(),
-        '/mesProgrammes': (context) => MesProgrammesPage(programmeText: '',),  // Assurez-vous que cette page est définie
-        '/profil': (context) => ProfilePage(),  // Assurez-vous que cette page est définie
+        '/mesProgrammes': (context) => MesProgrammesPage(),
+        '/profil': (context) => ProfilePage(),
       },
     );
   }
@@ -53,11 +53,10 @@ class AuthWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           User? user = snapshot.data;
           if (user == null) {
-            return LoginPage(); // Redirige vers LoginPage si aucun utilisateur n'est connecté
+            return LoginPage();
           }
-          return HomePage(); // Redirige vers HomePage si un utilisateur est connecté
+          return HomePage();
         }
-        // Affiche un indicateur de chargement pendant la vérification de l'état de connexion
         return Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
