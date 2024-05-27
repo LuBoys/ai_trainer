@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:test/pages/home_page.dart';
 import 'package:test/pages/auth/profile_page.dart';
 import 'package:test/mes_programmes.dart';
+import 'package:test/formulaire_page.dart'; // Importez la page du formulaire
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/mesProgrammes': (context) => MesProgrammesPage(),
         '/profil': (context) => ProfilePage(),
+        '/formulaire': (context) => FormulairePage(), // Assurez-vous que cette route est définie
       },
     );
   }

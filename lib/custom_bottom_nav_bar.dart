@@ -8,24 +8,36 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.list),
-          label: 'Mes programmes',
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.create),
-          label: 'Créer son programme',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profil',
-        ),
-      ],
-      currentIndex: selectedIndex,
-      selectedItemColor: Colors.amber[800],
-      onTap: onItemSelected,
+      ),
+      child: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Mes programmes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.create),
+            label: 'Créer son programme',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profil',
+          ),
+        ],
+        currentIndex: selectedIndex,
+        selectedItemColor: Color(0xFF6A11CB), 
+        unselectedItemColor: Color.fromARGB(255, 0, 0, 0), 
+        onTap: onItemSelected,
+      ),
     );
   }
 }

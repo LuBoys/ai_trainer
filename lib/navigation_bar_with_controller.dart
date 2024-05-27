@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test/custom_bottom_nav_bar.dart'; 
+import 'package:test/custom_bottom_nav_bar.dart';
 
 class NavigationBarWithController extends StatefulWidget {
   final int selectedIndex;
