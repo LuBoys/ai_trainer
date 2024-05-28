@@ -68,7 +68,7 @@ class _FormulairePageState extends State<FormulairePage> {
       'detailsRestrictions': _detailsRestrictionsController.text
     };
 
-    FirebaseFirestore.instance.collection('formResponses').add(formData).then((documentReference) async {
+       FirebaseFirestore.instance.collection('formResponses').add(formData).then((documentReference) async {
       print("Document ajouté avec l'ID: ${documentReference.id}");
       await sendFormDataToAPI(formData);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -82,47 +82,45 @@ class _FormulairePageState extends State<FormulairePage> {
     });
   }
 
-Future<void> sendFormDataToAPI(Map<String, dynamic> formData) async {
-  try {
-    final response = await http.post(
-      Uri.parse('https://trainer-flutter-let83h4eb-luboys-projects.vercel.app/generate-program'), // Mettez à jour l'URL
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode({'data': formData}),
-    );
-
-    if (response.statusCode == 200) {
-      final programme = jsonDecode(response.body);
-      print('Programme reçu: $programme');
-
-      // Enregistrez le programme généré dans Firestore
-      await FirebaseFirestore.instance.collection('generatedPrograms').add({
-        'title': 'Programme généré',
-        'content': programme['result'],  // assuming 'result' contains the generated program text
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-
-      // Affichez une notification de succès
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Programme de musculation généré avec succès!'))
+  Future<void> sendFormDataToAPI(Map<String, dynamic> formData) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://ai-trainer-kohl.vercel.app/api/generate-program'), // Mettez à jour l'URL
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({'data': formData}),
       );
-    } else {
-      // Affichez une notification d'échec
+
+      if (response.statusCode == 200) {
+        final programme = jsonDecode(response.body);
+        print('Programme reçu: $programme');
+
+        // Enregistrez le programme généré dans Firestore
+        await FirebaseFirestore.instance.collection('generatedPrograms').add({
+          'title': 'Programme généré',
+          'content': programme['result'],  // assuming 'result' contains the generated program text
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+
+        // Affichez une notification de succès
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Programme de musculation généré avec succès!'))
+        );
+      } else {
+        // Affichez une notification d'échec
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Échec de la génération du programme: ${response.body}'))
+        );
+      }
+    } catch (error) {
+      // Gestion des erreurs
+      print('Erreur lors de l\'envoi des données au serveur: $error');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Échec de la génération du programme: ${response.body}'))
+        SnackBar(content: Text('Erreur lors de l\'envoi des données au serveur'))
       );
     }
-  } catch (error) {
-    // Gestion des erreurs
-    print('Erreur lors de l\'envoi des données au serveur: $error');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Erreur lors de l\'envoi des données au serveur'))
-    );
   }
-}
-
-
 
   @override
   Widget build(BuildContext context) {

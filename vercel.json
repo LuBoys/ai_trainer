@@ -9,7 +9,7 @@
   "routes": [
     {
       "src": "/api/generate-program",
-      "dest": "/api/generate-program"
+      "dest": "/server.js"
     }
   ]
 }

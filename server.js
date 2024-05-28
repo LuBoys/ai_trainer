@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-app.post('/generate-program', async (req, res) => {
+app.post('/api/generate-program', async (req, res) => {
     try {
         const { data } = req.body;
 
