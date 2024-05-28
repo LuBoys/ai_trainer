@@ -17,18 +17,21 @@ app.post('/api/generate-program', async (req, res) => {
             return res.status(400).json({ message: 'Données manquantes dans la requête.' });
         }
 
-        const response = await axios.post('https://api.openai.com/v1/completions', {
-            model: 'text-davinci-003',
-            prompt: `Générer un programme d'entraînement basé sur: ${JSON.stringify(data)}`,
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+            model: 'gpt-3.5-turbo',
+            messages: [
+                { role: 'system', content: 'You are a personal training assistant.' },
+                { role: 'user', content: `Générer un programme d'entraînement basé sur: ${JSON.stringify(data)}` }
+            ],
             max_tokens: 500
         }, {
             headers: {
                 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
                 'Content-Type': 'application/json'
-            }            
+            }
         });
 
-        res.status(200).json({ result: response.data.choices[0].text });
+        res.status(200).json({ result: response.data.choices[0].message.content });
     } catch (error) {
         console.error('Erreur lors de la génération du programme:', error);
 
