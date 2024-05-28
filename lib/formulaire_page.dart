@@ -233,7 +233,7 @@ class _FormulairePageState extends State<FormulairePage> {
                           DropdownButtonFormField<double>(
                             value: tempsEntrainementHeure,
                             onChanged: (newValue) => setState(() => tempsEntrainementHeure = newValue),
-                            items: <double>[0.5, 1.0, 1.5, 2.0, 2.5, 3.0].map<DropdownMenuItem<double>>((value) {
+                            items: <double>[0.5, 1.0, 1.3, 2.0, 2.3, 3.0].map<DropdownMenuItem<double>>((value) {
                               return DropdownMenuItem<double>(
                                 value: value,
                                 child: Text("$value heures"),

@@ -1,7 +1,8 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin"
+    id "kotlin-kapt"
+    id "com.google.gms.google-services"
 }
 
 def localProperties = new Properties()
@@ -23,8 +24,8 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.example.test"
-    compileSdkVersion flutter.compileSdkVersion
+    namespace "com.example.new_project"
+    compileSdkVersion 31
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -41,7 +42,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.test"
+        applicationId "com.example.new_project"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
@@ -60,9 +61,10 @@ flutter {
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-firestore:24.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
-
