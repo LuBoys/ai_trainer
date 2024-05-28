@@ -50,31 +50,31 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> _signInWithGoogle() async {
     try {
-      if (kIsWeb) {
-        // Le code de connexion pour le Web
-        // Remplacer par le code utilisant Google Identity Services
-      } else {
-        final GoogleSignIn googleSignIn = GoogleSignIn(
-          clientId: '215766798580-5bvrdt2ts3cep4a95k93uqd65p3i1hd1.apps.googleusercontent.com', // Android client ID
-          scopes: ['email'],
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        clientId: kIsWeb
+            ? '215766798580-dtnekv8fojv6hbog3eovd5on6kg1fs84.apps.googleusercontent.com' // Web client ID
+            : '215766798580-5bvrdt2ts3cep4a95k93uqd65p3i1hd1.apps.googleusercontent.com', // Android client ID
+        scopes: ['email'],
+      );
+
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        return; // L'utilisateur a annulé la connexion
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      if (userCredential.user != null) {
+        await _saveLoginState();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => FormulairePage()),
         );
-        final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-        if (googleUser == null) {
-          return; // L'utilisateur a annulé la connexion
-        }
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-        final UserCredential userCredential = await _auth.signInWithCredential(credential);
-        if (userCredential.user != null) {
-          await _saveLoginState();
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => FormulairePage()),
-          );
-        }
       }
     } catch (e) {
       print('Erreur lors de la connexion avec Google : $e');
@@ -153,8 +153,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _passwordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -191,36 +191,19 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                         SizedBox(height: 16),
-                        kIsWeb
-                          ? Container(
-                              width: double.infinity,
-                              child: OutlinedButton(
-                                onPressed: () => _signInWithGoogle(),
-                                style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: Colors.grey),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: Text(
-                                  'S\'inscrire avec Google',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ),
-                            )
-                          : ElevatedButton.icon(
-                              onPressed: _signInWithGoogle,
-                              icon: Image.asset('assets/google_logo.png', height: 24, width: 24),
-                              label: Text('S\'inscrire avec Google'),
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.black,
-                                backgroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
+                        ElevatedButton.icon(
+                          onPressed: _signInWithGoogle,
+                          icon: Image.asset('assets/google_logo.png', height: 24, width: 24),
+                          label: Text('S\'inscrire avec Google'),
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.black,
+                            backgroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
+                          ),
+                        ),
                         SizedBox(height: 16),
                         TextButton(
                           onPressed: () {

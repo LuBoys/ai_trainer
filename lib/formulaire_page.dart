@@ -68,7 +68,7 @@ class _FormulairePageState extends State<FormulairePage> {
       'detailsRestrictions': _detailsRestrictionsController.text
     };
 
-       FirebaseFirestore.instance.collection('formResponses').add(formData).then((documentReference) async {
+   FirebaseFirestore.instance.collection('formResponses').add(formData).then((documentReference) async {
       print("Document ajouté avec l'ID: ${documentReference.id}");
       await sendFormDataToAPI(formData);
       ScaffoldMessenger.of(context).showSnackBar(
