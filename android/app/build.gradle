@@ -60,8 +60,9 @@ flutter {
 }
 
 dependencies {
-    implementation 'com.google.firebase:firebase-core:18.0.2'  // Assurez-vous que cette dépendance est nécessaire
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
 }
 
-// Assurez-vous que cette ligne est après les dépendances
 apply plugin: 'com.google.gms.google-services'
+

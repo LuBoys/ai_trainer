@@ -20,6 +20,7 @@ dependencies:
   google_fonts: ^4.0.4
   flutter_animate: ^4.5.0
   google_sign_in: ^6.2.1
+  flutter_dotenv: ^5.1.0
 
 
 dev_dependencies:
@@ -33,3 +34,5 @@ flutter:
   # Assurez-vous que l'indentation est correcte
   assets:
     - assets/logo.png
+    - assets/google_logo.png
+    - .env

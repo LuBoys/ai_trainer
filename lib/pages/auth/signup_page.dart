@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:test/formulaire_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/pages/auth/login_page.dart'; // Assurez-vous que le chemin est correct
@@ -42,6 +44,42 @@ class _SignUpPageState extends State<SignUpPage> {
       print('Erreur lors de l\'inscription : $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Erreur lors de l'inscription : ${e.toString()}")),
+      );
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    try {
+      if (kIsWeb) {
+        // Le code de connexion pour le Web
+        // Remplacer par le code utilisant Google Identity Services
+      } else {
+        final GoogleSignIn googleSignIn = GoogleSignIn(
+          clientId: '215766798580-5bvrdt2ts3cep4a95k93uqd65p3i1hd1.apps.googleusercontent.com', // Android client ID
+          scopes: ['email'],
+        );
+        final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+        if (googleUser == null) {
+          return; // L'utilisateur a annulé la connexion
+        }
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        final UserCredential userCredential = await _auth.signInWithCredential(credential);
+        if (userCredential.user != null) {
+          await _saveLoginState();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => FormulairePage()),
+          );
+        }
+      }
+    } catch (e) {
+      print('Erreur lors de la connexion avec Google : $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de la connexion avec Google : $e')),
       );
     }
   }
@@ -152,6 +190,37 @@ class _SignUpPageState extends State<SignUpPage> {
                             ),
                           ),
                         ),
+                        SizedBox(height: 16),
+                        kIsWeb
+                          ? Container(
+                              width: double.infinity,
+                              child: OutlinedButton(
+                                onPressed: () => _signInWithGoogle(),
+                                style: OutlinedButton.styleFrom(
+                                  side: BorderSide(color: Colors.grey),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: Text(
+                                  'S\'inscrire avec Google',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            )
+                          : ElevatedButton.icon(
+                              onPressed: _signInWithGoogle,
+                              icon: Image.asset('assets/google_logo.png', height: 24, width: 24),
+                              label: Text('S\'inscrire avec Google'),
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
                         SizedBox(height: 16),
                         TextButton(
                           onPressed: () {

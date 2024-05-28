@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -17,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _rememberMe = false;
-  bool _passwordVisible = false; // Variable pour contrôler la visibilité du mot de passe
+  bool _passwordVisible = false;
 
   Future<void> _saveLoginState(bool isLoggedIn) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -59,15 +60,23 @@ class _LoginPageState extends State<LoginPage> {
       }
     } catch (e) {
       print('Erreur lors de la connexion : $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de la connexion : $e')),
+      );
     }
   }
 
   Future<void> _signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        clientId: kIsWeb
+            ? '215766798580-dtnekv8fojv6hbog3eovd5on6kg1fs84.apps.googleusercontent.com' // Web client ID
+            : '215766798580-5bvrdt2ts3cep4a95k93uqd65p3i1hd1.apps.googleusercontent.com', // Android client ID
+        scopes: ['email'],
+      );
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
-        // L'utilisateur a annulé la connexion
-        return;
+        return; // L'utilisateur a annulé la connexion
       }
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
@@ -84,6 +93,9 @@ class _LoginPageState extends State<LoginPage> {
       }
     } catch (e) {
       print('Erreur lors de la connexion avec Google : $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de la connexion avec Google : $e')),
+      );
     }
   }
 
@@ -227,7 +239,8 @@ class _LoginPageState extends State<LoginPage> {
                             icon: Image.asset('assets/google_logo.png', height: 24, width: 24),
                             label: Text('Se connecter avec Google'),
                             style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color
+                              foregroundColor: Colors.black,
+                              backgroundColor: Colors.white,
                               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
